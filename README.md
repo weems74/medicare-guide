@@ -22,8 +22,26 @@ Early scaffolding. See [CHANGELOG.md](./CHANGELOG.md) for what's landed.
 ## Setup
 
 ```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip3 install -r requirements.txt
 cp .env.example .env
 # add your own ANTHROPIC_API_KEY to .env
 ```
 
-(Nothing to run yet — the system prompt, figures registry, and eval set come next.)
+## Running the evaluation
+
+```bash
+# 1. One time: turn the CMS PDFs into text (the PDFs themselves are never committed)
+python3 data/extract_sources.py /path/to/folder/with/the/pdfs
+
+# 2. Check that everything loads, with no API calls
+python3 eval/run_eval.py --dry-run
+
+# 3. Run the golden set (answers + deterministic checks + LLM judge)
+python3 eval/run_eval.py --label my-change
+```
+
+Each run writes `eval/results/<timestamp>_<label>/results.md` and `results.json`, refreshes
+`eval/results/latest.*`, and compares against the previous run so you can see what got better or
+worse. Use `--ids a,b` to run a subset and `--no-judge` for a cheaper checks-only pass.
+Results are git-ignored.

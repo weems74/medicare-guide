@@ -12,17 +12,26 @@
 #   expected_year       plan year the answer should use, if a figure is involved ("n/a" if none)
 #   escalation          official contact/resource the answer should point to, or null
 #   notes               why this case is in the set / what failure mode it catches
+#
+# Optional fields (checked by code in run_eval.py, no LLM involved):
+#   forbid_dollar_figures   true = the answer must contain no "$" amounts
+#   forbid_next_step        true = the answer must not add a next step or official contact
+#   forbid_text             list of strings that must not appear anywhere in the answer
 
 - id: concept-parts-overview
   category: concepts
   question: What's the difference between Part A and Part B?
   expected_behavior: 'Plain-language explanation: Part A is hospital insurance (inpatient
     care, skilled nursing, hospice, some home health); Part B is medical insurance (doctor
-    visits, outpatient care, preventive services, durable medical equipment). Cites the handbook.'
+    visits, outpatient care, preventive services, durable medical equipment). Cites the handbook. Does not include dollar figures, deadlines, or a next step (the
+    question is explanatory).'
   must_cite: true
   expected_year: n/a
   escalation: null
-  notes: Baseline concept question, no year-sensitive figures. Should be short.
+  forbid_dollar_figures: true
+  forbid_next_step: true
+  notes: Baseline concept question, no year-sensitive figures. Should be short. Also guards
+    the over-answering fix in prompt v0.2 (unrequested premiums, deductibles, next steps).
 - id: enrollment-open-enrollment-window
   category: enrollment_timing
   question: When can I change my plan?
